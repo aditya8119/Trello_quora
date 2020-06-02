@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name="users", schema = "quora")
@@ -158,11 +157,11 @@ public class UserEntity implements Serializable {
         this.aboutMe = aboutMe;
     }
 
-    public Date getDob() {
+    public ZonedDateTime getDob() {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(ZonedDateTime dob) {
         this.dob = dob;
     }
 
