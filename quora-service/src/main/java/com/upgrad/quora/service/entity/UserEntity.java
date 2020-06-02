@@ -1,16 +1,24 @@
 package com.upgrad.quora.service.entity;
 
-
 import org.apache.commons.lang3.builder.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 
 @Entity
-@Table(name="users", schema = "quora")
+@Table(name="users", schema = "public")
+@NamedQueries(
+        {
+                @NamedQuery(name = "userByUuid", query = "select u from UserEntity u where u.uuid = :uuid"),
+                @NamedQuery(name = "userById", query = "select u from UserEntity u where u.id = :id"),
+                @NamedQuery(name = "userByEmail", query = "select u from UserEntity u where u.email =:email"),
+                @NamedQuery(name = "userByUsername", query = "select u from UserEntity u where u.username =:username"),
+                @NamedQuery(name = "deleteUserByUuid", query = "delete from UserEntity u where u.uuid = :uuid")
+        }
+)
+
 public class UserEntity implements Serializable {
 
     @Id
@@ -20,14 +28,14 @@ public class UserEntity implements Serializable {
 
     @Column(name = "UUID")
     @NotNull
-    private int uuid;
+    private String uuid;
 
-    @Column(name = "FIRST_NAME")
+    @Column(name = "FIRSTNAME")
     @NotNull
     @Size(max = 30)
     private String firstName;
 
-    @Column(name = "LAST_NAME")
+    @Column(name = "LASTNAME")
     @NotNull
     @Size(max = 30)
     private String lastName;
@@ -57,7 +65,7 @@ public class UserEntity implements Serializable {
     @Size(max = 30)
     private String country;
 
-    @Column(name = "ABOUT_ME")
+    @Column(name = "ABOUTME")
     @NotNull
     @Size(max = 50)
     private String aboutMe;
@@ -65,14 +73,14 @@ public class UserEntity implements Serializable {
     @Column
     @NotNull
     @Size(max = 30)
-    private ZonedDateTime dob;
+    private String dob;
 
     @Column(name = "ROLE")
     @NotNull
     @Size(max = 30)
     private String role;
 
-    @Column(name = "CONTACT_NUMBER")
+    @Column(name = "CONTACTNUMBER")
     @NotNull
     @Size(max = 30)
     private String contactNumber;
@@ -85,11 +93,11 @@ public class UserEntity implements Serializable {
         this.id = id;
     }
 
-    public int getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
-    public void setUuid(int uuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
@@ -157,11 +165,11 @@ public class UserEntity implements Serializable {
         this.aboutMe = aboutMe;
     }
 
-    public ZonedDateTime getDob() {
+    public String getDob() {
         return dob;
     }
 
-    public void setDob(ZonedDateTime dob) {
+    public void setDob(String dob) {
         this.dob = dob;
     }
 

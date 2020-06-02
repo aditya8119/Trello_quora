@@ -4,6 +4,7 @@ import com.upgrad.quora.service.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 @Service
@@ -15,6 +16,26 @@ public class UserDao {
     public UserEntity createUser(UserEntity userEntity){
         entityManager.persist(userEntity);
         return userEntity;
+    }
+
+    public UserEntity getUserByEmail(final String email) {
+        try {
+            return entityManager.createNamedQuery("userByEmail", UserEntity.class)
+                    .setParameter("email", email).getSingleResult();
+        } catch (NoResultException exc) {
+            return null;
+        }
+
+    }
+
+    public UserEntity getUserByUsername(final String username) {
+        try {
+            return entityManager.createNamedQuery("userByUsername", UserEntity.class)
+                    .setParameter("username", username).getSingleResult();
+        } catch (NoResultException exc) {
+            return null;
+        }
+
     }
 
 }
