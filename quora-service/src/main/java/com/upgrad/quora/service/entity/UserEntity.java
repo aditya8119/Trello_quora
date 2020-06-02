@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
@@ -65,7 +66,7 @@ public class UserEntity implements Serializable {
     @Column
     @NotNull
     @Size(max = 30)
-    private Date dob;
+    private ZonedDateTime dob;
 
     @Column(name = "ROLE")
     @NotNull
