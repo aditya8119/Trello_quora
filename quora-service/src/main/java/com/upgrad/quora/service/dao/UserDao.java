@@ -66,5 +66,14 @@ public class UserDao {
 
     }
 
+    public UserAuthTokenEntity getUserAuthToken(final String accessToken) {
+        try {
+            return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
+        } catch (NoResultException nre) {
+
+            return null;
+        }
+    }
+
 
 }

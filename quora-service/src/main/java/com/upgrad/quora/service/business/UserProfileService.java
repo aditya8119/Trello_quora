@@ -23,15 +23,18 @@ public class UserProfileService {
       throws AuthorizationFailedException, UserNotFoundException {
 
     UserAuthTokenEntity userAuthTokenEntity = userAuthDao.getUserAuthByToken(accessToken);
-    if(userAuthTokenEntity == null) {
+    if (userAuthTokenEntity == null) {
       throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
     }
 
-    //Chek if user has signed out
-
+    //Check if user has signed out
+    if (userAuthDao.userSignOutStatus(accessToken)) {
+      throw new AuthorizationFailedException("ATHR-002",
+          "User is signed out.Sign in first to get user details");
+    }
 
     final UserEntity userDetails = userDao.getUserById(uuid);
-    if(userDetails == null) {
+    if (userDetails == null) {
       throw new UserNotFoundException("USR-001", "User with entered uuid does not exist");
     }
     return userDetails;
