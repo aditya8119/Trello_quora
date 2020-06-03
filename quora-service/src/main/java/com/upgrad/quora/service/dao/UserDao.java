@@ -3,6 +3,7 @@ package com.upgrad.quora.service.dao;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
+import java.time.ZonedDateTime;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -89,5 +90,31 @@ public class UserDao {
             return null;
         }
 
+
+
+    }
+
+    public QuestionEntity getQuestionByQUuid(final String uuid) {
+        try {
+            return entityManager.createNamedQuery("questionByUuid", QuestionEntity.class)
+                .setParameter("uuid", uuid).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
+    public void deleteQuestion(final String uuid) {
+        QuestionEntity questionEntity = getQuestionByQUuid(uuid);
+        entityManager.remove(questionEntity);
+    }
+
+    public boolean userSignOutStatus(String authorizationToken) {
+        UserAuthTokenEntity userAuthTokenEntity = getUserAuthToken(authorizationToken);
+        ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();
+        ZonedDateTime loggedInStatus = userAuthTokenEntity.getLoginAt();
+        if (loggedOutStatus != null && loggedOutStatus.isAfter(loggedInStatus)) {
+            return true;
+        } else
+            return false;
     }
 }
