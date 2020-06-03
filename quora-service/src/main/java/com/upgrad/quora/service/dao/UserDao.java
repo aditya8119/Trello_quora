@@ -2,6 +2,9 @@ package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
+import com.upgrad.quora.service.exception.AuthorizationFailedException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
+import java.time.ZonedDateTime;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +53,18 @@ public class UserDao {
     public void updateUser(final UserEntity updatedUserEntity) {
         entityManager.merge(updatedUserEntity);
     }
+
+    //Get the user details by user UUID
+    //Returns UserEntity
+    public UserEntity getUserById(final String uuid) {
+        try {
+            return entityManager.createNamedQuery("userByUuid", UserEntity.class)
+                .setParameter("uuid", uuid).getSingleResult();
+        } catch (NoResultException exc) {
+            return null;
+        }
+
+    }
+
 
 }
