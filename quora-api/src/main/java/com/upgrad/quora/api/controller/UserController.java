@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
-public class SignupController {
+public class UserController {
 
     @Autowired
     SignupBusinessService signupBusinessService;
