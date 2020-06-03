@@ -8,16 +8,15 @@ import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.upgrad.quora.api.model.QuestionResponse;
 import com.upgrad.quora.api.model.QuestionRequest;
+import com.upgrad.quora.api.model.QuestionDetailsResponse;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -28,6 +27,7 @@ public class QuestionController {
     @Autowired
     QuestionService questionService;
 
+    //Create Question API
     @RequestMapping(method = RequestMethod.POST, path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(final QuestionRequest createQuestionRequest,@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
 
@@ -44,6 +44,21 @@ public class QuestionController {
         QuestionResponse questionResponse = new QuestionResponse().id(questionEntityResponse.getUuid()).status("QUESTION CREATED");
 
         return new ResponseEntity<QuestionResponse>(questionResponse, HttpStatus.CREATED);
+    }
+
+    //Get Question By User Id
+    @RequestMapping(method = RequestMethod.GET, path = "/question/all/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<QuestionDetailsResponse> getQuestionByUserId(@PathVariable("userId") final String uuid, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, UserNotFoundException {
+
+        String [] bearerToken = authorization.split("Bearer ");
+        System.out.println("Bearer Token "+bearerToken[1]);
+        questionService.getAccessToken(bearerToken[1]);
+        final QuestionEntity questionEntityResponse = questionService.getQuestionByUserId(uuid);
+        QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse()
+                .id(questionEntityResponse.getUuid())
+                .content(questionEntityResponse.getContent());
+
+        return new ResponseEntity<>(questionDetailsResponse, HttpStatus.OK);
     }
 }
 

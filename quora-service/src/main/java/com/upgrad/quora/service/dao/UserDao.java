@@ -62,6 +62,7 @@ public class UserDao {
 
     }
 
+    //Get User By AccessToken
     public UserAuthTokenEntity getUserAuthToken(final String accessToken) {
         try {
             return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
@@ -72,11 +73,21 @@ public class UserDao {
 
     }
 
+    //Create Question DAO
     public QuestionEntity createQuestion(QuestionEntity questionEntity){
         entityManager.persist(questionEntity);
         return questionEntity;
     }
 
+    //GET Question By UUID
+    public QuestionEntity getQuestionByUserId(final String uuid) {
+        try {
+            System.out.println("User Id: "+uuid);
+            return entityManager.createNamedQuery("questionByUserId", QuestionEntity.class).setParameter("uuid", uuid).getSingleResult();
+        }
+        catch (NoResultException nre) {
+            return null;
+        }
 
-
+    }
 }
