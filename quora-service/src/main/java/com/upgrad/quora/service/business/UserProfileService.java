@@ -1,6 +1,5 @@
 package com.upgrad.quora.service.business;
 
-import com.upgrad.quora.service.dao.UserAuthDao;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
@@ -15,14 +14,10 @@ public class UserProfileService {
   @Autowired
   private UserDao userDao;
 
-  @Autowired
-  private UserAuthDao userAuthDao;
-
-
   public UserEntity getUserByUuid(final String uuid, final String accessToken)
       throws AuthorizationFailedException, UserNotFoundException {
 
-    UserAuthTokenEntity userAuthTokenEntity = userAuthDao.getUserAuthByToken(accessToken);
+    UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
     if(userAuthTokenEntity == null) {
       throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
     }
