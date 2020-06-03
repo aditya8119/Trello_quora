@@ -83,7 +83,7 @@ nb-configuration.xml
 .DS_Store
 
 ##############################
-Ignoring files with Localhost properties
+#Ignoring files with Localhost properties
 ##############################
 quora-api/src/main/resources/application.yaml
 quora-db/src/main/resources/config/localhost.properties
