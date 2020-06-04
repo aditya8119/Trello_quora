@@ -53,7 +53,7 @@ public class UserDao {
     //Signout function
     //Returns UUID of the signed out user
     public String signOut(final String accessToken) throws SignOutRestrictedException {
-        UserAuthTokenEntity userAuthTokenEntity = entityManager.createNamedQuery("userByAccessToken", UserAuthTokenEntity.class)
+        UserAuthTokenEntity userAuthTokenEntity = entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class)
                 .setParameter("accessToken", accessToken).getSingleResult();
         final ZonedDateTime now = ZonedDateTime.now();
 
@@ -69,7 +69,7 @@ public class UserDao {
     //Returns boolean based on whether the access token is present in the table
     public boolean hasUserSignedIn(final String accessToken) {
         try {
-            UserAuthTokenEntity userAuthTokenEntity = entityManager.createNamedQuery("userByAccessToken", UserAuthTokenEntity.class)
+            UserAuthTokenEntity userAuthTokenEntity = entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class)
                     .setParameter("accessToken", accessToken).getSingleResult();
             return true;
         } catch (NoResultException exception) {
@@ -81,7 +81,7 @@ public class UserDao {
     //Written for all authorization calls for all controllers
     public UserAuthTokenEntity isValidActiveAuthToken(final String accessToken, Enum<ActionType> actionType) throws AuthorizationFailedException {
         try {
-            UserAuthTokenEntity userAuthTokenEntity = entityManager.createNamedQuery("userByAccessToken", UserAuthTokenEntity.class)
+            UserAuthTokenEntity userAuthTokenEntity = entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class)
                     .setParameter("accessToken", accessToken).getSingleResult();
             final ZonedDateTime now = ZonedDateTime.now();
             if (userAuthTokenEntity.getLogoutAt() == null) {
@@ -156,7 +156,7 @@ public class UserDao {
     }
 
     public boolean isRoleAdmin(final String accessToken) {
-        UserAuthTokenEntity userAuthTokenEntity = entityManager.createNamedQuery("userByAccessToken", UserAuthTokenEntity.class)
+        UserAuthTokenEntity userAuthTokenEntity = entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class)
                 .setParameter("accessToken", accessToken).getSingleResult();
         UserEntity userEntity = userAuthTokenEntity.getUser();
         if (userEntity.getRole().equalsIgnoreCase("admin")) {
