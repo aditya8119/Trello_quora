@@ -2,14 +2,10 @@ package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
-import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import com.upgrad.quora.service.type.ActionType;
-
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
-
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -157,5 +153,16 @@ public class UserDao {
             return true;
         } else
             return false;
+    }
+
+    public boolean isRoleAdmin(final String accessToken) {
+        UserAuthTokenEntity userAuthTokenEntity = entityManager.createNamedQuery("userByAccessToken", UserAuthTokenEntity.class)
+                .setParameter("accessToken", accessToken).getSingleResult();
+        UserEntity userEntity = userAuthTokenEntity.getUser();
+        if (userEntity.getRole().equalsIgnoreCase("admin")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
