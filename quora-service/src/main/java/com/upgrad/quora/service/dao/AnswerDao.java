@@ -37,9 +37,12 @@ public class AnswerDao {
   }
 
   public List<AnswerEntity> getAllAnswersToQuestion(String questionId){
-    List l = entityManager.createQuery(
-            "??")
-            .getResultList();
+    try {
+      return entityManager.createNamedQuery("answerByQuesId", AnswerEntity.class)
+              .setParameter("questionId", questionId).getResultList();
+    } catch (NoResultException nre) {
+      return null;
+    }
   }
 
 }

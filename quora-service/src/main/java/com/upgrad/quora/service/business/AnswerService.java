@@ -105,7 +105,7 @@ public class AnswerService {
   }
 
   @Transactional(propagation = Propagation.REQUIRED)
-  public List<AnswerEntity> getAllAnswersToQuestion(final String authorization, final String questionId) throws AuthorizationFailedException, InvalidQuestionException{
+  public List<AnswerEntity> getAllAnswersToQuestion(final String questionId, final String authorization) throws AuthorizationFailedException, InvalidQuestionException{
     UserAuthTokenEntity userAuthToken=userDao.getUserAuthToken(authorization);
     if (userAuthToken == null) {
       throw new AuthorizationFailedException("ATHR-001", "User has not signed in");

@@ -73,13 +73,13 @@ public class AnswerController {
     return new ResponseEntity<com.upgrad.quora.api.model.AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.GET, path = "/answer/all/{questionId}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @RequestMapping(method = RequestMethod.GET, path = "/answer/all/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<List<AnswerDetailsResponse>> getAllAnswersToQuestion(@PathVariable("questionId") final String questionId, @RequestHeader("authorization")final String authorization)throws AuthorizationFailedException, InvalidQuestionException{
     final List<AnswerEntity> answerResponseEntityList = answerService.getAllAnswersToQuestion(questionId,authorization);
     List<AnswerDetailsResponse> answerOutputList = new ArrayList<>();
     for(AnswerEntity answerEntity:answerResponseEntityList)
     {
-      AnswerDetailsResponse answerDetailsResponse = new AnswerDetailsResponse().id(answerEntity.getUuid()).answerContent(answerEntity.getAnswer());
+      AnswerDetailsResponse answerDetailsResponse = new AnswerDetailsResponse().id(answerEntity.getUuid()).questionContent(answerEntity.getQuestion().getContent()).answerContent(answerEntity.getAnswer());
       answerOutputList.add(answerDetailsResponse);
     }
 
