@@ -71,7 +71,7 @@ public class QuestionService {
         // Validate if current user is the owner of requested question or the role of user is not nonadmin
         if (!userAuthEntity.getUser().getUuid().equals(userDao.getQuestionByQUuid(questionId).getUser().getUuid())) {
             if (userAuthEntity.getUser().getRole().equals("nonadmin")) {
-                throw new AuthorizationFailedException("ATHR-003", "Oly the question owner or admin can delete the question");
+                throw new AuthorizationFailedException("ATHR-003", "Only the question owner or admin can delete the question");
             }
         }
 
