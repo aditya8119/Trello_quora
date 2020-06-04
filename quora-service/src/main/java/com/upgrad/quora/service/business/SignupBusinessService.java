@@ -25,7 +25,9 @@ public class SignupBusinessService {
                 String password = userEntity.getPassword();
                 String[] encryptedText = cryptographyProvider.encrypt(password);
                 userEntity.setSalt(encryptedText[0]);
+                System.out.println("SignupBusinessService:SALT IS :"+encryptedText[0]);
                 userEntity.setPassword(encryptedText[1]);
+                System.out.println("SignupBusinessService:ENCRYPTED PASSWORD IS :"+encryptedText[1]);
                 return userDao.createUser(userEntity);
             } else {
                 throw new SignUpRestrictedException("SGR-002", "This user has already been registered, try with any other emailId");

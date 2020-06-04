@@ -25,9 +25,13 @@ public class AuthenticationService {
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity authenticate(final String username, final String password) throws AuthenticationFailedException {
         UserEntity userEntity = userDao.getUserByUsername(username);
+        System.out.println("INSIDE AUTHENTICATE USERNAME IS:"+username);
         if (userEntity == null) {
             throw new AuthenticationFailedException("ATH-001", "This username does not exist");
         }
+
+        System.out.println("SALT IS :"+userEntity.getSalt());
+        System.out.println("PASSWORD SENT TO ENCRYPT IS :"+ password);
 
         final String encryptedPassword = cryptographyProvider.encrypt(password, userEntity.getSalt());
         if (encryptedPassword.equals(userEntity.getPassword())) {
