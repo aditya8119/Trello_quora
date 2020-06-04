@@ -69,5 +69,21 @@ public class QuestionController {
             .status("QUESTION DELETED");
         return new ResponseEntity<QuestionDeleteResponse>(questionDeleteResponse, HttpStatus.OK);
     }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
+
+        final List<QuestionEntity> questionEntityResponseList = questionService.getAllQuestions(authorization);
+        List<QuestionDetailsResponse> questionOutputList=new ArrayList<>();
+        for(QuestionEntity quesEntity:questionEntityResponseList)
+        {
+            QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse()
+                    .id(quesEntity.getUuid())
+                    .content(quesEntity.getContent());
+            questionOutputList.add(questionDetailsResponse);
+        }
+
+        return new ResponseEntity<>(questionOutputList, HttpStatus.OK);
+    }
 }
 

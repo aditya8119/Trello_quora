@@ -103,4 +103,23 @@ public class QuestionService {
 
         questionDao.deleteQuestion(questionId);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<QuestionEntity> getAllQuestions(final String authorization) throws AuthorizationFailedException{
+        System.out.println("QuestionService.getAllQuestions: authorization :"+ authorization);
+        UserAuthTokenEntity userAuthToken=userDao.getUserAuthToken(authorization);
+        if (userAuthToken == null) {
+            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+        }
+        if(userAuthToken.getLogoutAt()!=null)
+        {
+            throw new AuthorizationFailedException("ATHR-002",
+                    "User is signed out.Sign in first to get all questions posted by a specific user");
+        }
+
+        List<QuestionEntity> questionEntityList=questionDao.getAllQuestions();
+
+        return questionEntityList;
+    }
+
 }
