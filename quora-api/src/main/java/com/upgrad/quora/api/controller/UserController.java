@@ -1,11 +1,10 @@
 package com.upgrad.quora.api.controller;
 
-import com.upgrad.quora.api.model.SignoutResponse;
-import com.upgrad.quora.api.model.SignupUserRequest;
 import com.upgrad.quora.api.model.SignupUserResponse;
+import com.upgrad.quora.api.model.SignupUserRequest;
 import com.upgrad.quora.service.business.AuthenticationService;
-import com.upgrad.quora.service.business.SignoutService;
 import com.upgrad.quora.service.business.SignupBusinessService;
+import com.upgrad.quora.service.business.SignoutService;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
