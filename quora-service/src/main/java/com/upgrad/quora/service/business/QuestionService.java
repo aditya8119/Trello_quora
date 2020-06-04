@@ -1,5 +1,6 @@
 package com.upgrad.quora.service.business;
 
+import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
@@ -17,6 +18,9 @@ public class QuestionService {
     private UserDao userDao;
 
     @Autowired
+    private QuestionDao questionDao;
+
+    @Autowired
     private PasswordCryptographyProvider cryptographyProvider;
 
     //getAccessToken
@@ -32,13 +36,13 @@ public class QuestionService {
     //CreateQuestion Service
     @Transactional(propagation = Propagation.REQUIRED)
     public QuestionEntity createQuestion(QuestionEntity questionEntity){
-                return userDao.createQuestion(questionEntity);
+                return questionDao.createQuestion(questionEntity);
     }
 
     //Get Question By UUID
     @Transactional(propagation = Propagation.REQUIRED)
     public QuestionEntity getQuestionByUserId(final String uuid) throws UserNotFoundException {
-        QuestionEntity questionEntity=userDao.getQuestionByUserId(uuid);
+        QuestionEntity questionEntity=questionDao.getQuestionByUserId(uuid);
         if (questionEntity == null) {
             throw new UserNotFoundException("USR-001", "User with entered uuid whose question details are to be seen does not exist");
         }
@@ -64,17 +68,17 @@ public class QuestionService {
         }
 
         // Validate if requested question exist or not
-        if (userDao.getQuestionByQUuid(questionId) == null) {
+        if (questionDao.getQuestionByQUuid(questionId) == null) {
             throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
         }
 
         // Validate if current user is the owner of requested question or the role of user is not nonadmin
-        if (!userAuthEntity.getUser().getUuid().equals(userDao.getQuestionByQUuid(questionId).getUser().getUuid())) {
+        if (!userAuthEntity.getUser().getUuid().equals(questionDao.getQuestionByQUuid(questionId).getUser().getUuid())) {
             if (userAuthEntity.getUser().getRole().equals("nonadmin")) {
                 throw new AuthorizationFailedException("ATHR-003", "Only the question owner or admin can delete the question");
             }
         }
 
-        userDao.deleteQuestion(questionId);
+        questionDao.deleteQuestion(questionId);
     }
 }
