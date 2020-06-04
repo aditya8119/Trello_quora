@@ -1,10 +1,12 @@
 package com.upgrad.quora.api.controller;
 
-import com.upgrad.quora.api.model.SignupUserResponse;
+import com.upgrad.quora.api.model.SigninResponse;
+import com.upgrad.quora.api.model.SignoutResponse;
 import com.upgrad.quora.api.model.SignupUserRequest;
+import com.upgrad.quora.api.model.SignupUserResponse;
 import com.upgrad.quora.service.business.AuthenticationService;
-import com.upgrad.quora.service.business.SignupBusinessService;
 import com.upgrad.quora.service.business.SignoutService;
+import com.upgrad.quora.service.business.SignupBusinessService;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
@@ -67,8 +69,9 @@ public class UserController {
         byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
         String decodedText = new String(decode);
         String[] decodedArray = decodedText.split(":");
-        System.out.println("Username : "+decodedArray[0].substring(1));
-        UserAuthTokenEntity userAuthToken = authenticationService.authenticate(decodedArray[0].substring(1), decodedArray[1].substring(0,decodedArray[1].length()-1));
+        System.out.println("Username :"+decodedArray[0]);
+        System.out.println("Password :"+decodedArray[1]);
+        UserAuthTokenEntity userAuthToken = authenticationService.authenticate(decodedArray[0], decodedArray[1]);
         UserEntity user = userAuthToken.getUser();
 
         com.upgrad.quora.api.model.SigninResponse authorizedUserResponse = new com.upgrad.quora.api.model.SigninResponse().id(user.getUuid())
@@ -76,7 +79,7 @@ public class UserController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("access-token", userAuthToken.getAccessToken());
-        return new ResponseEntity<com.upgrad.quora.api.model.SigninResponse>(authorizedUserResponse, headers, HttpStatus.OK);
+        return new ResponseEntity<SigninResponse>(authorizedUserResponse, headers, HttpStatus.OK);
     }
 
 
