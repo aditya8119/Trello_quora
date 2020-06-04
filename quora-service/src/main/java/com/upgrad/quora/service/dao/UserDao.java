@@ -1,17 +1,20 @@
 package com.upgrad.quora.service.dao;
 
-import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
-import java.time.ZonedDateTime;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
+import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import com.upgrad.quora.service.type.ActionType;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.time.ZonedDateTime;
 
 @Repository
 public class UserDao {
@@ -145,39 +148,6 @@ public class UserDao {
 
     }
 
-    //Create Question DAO
-    public QuestionEntity createQuestion(QuestionEntity questionEntity){
-        entityManager.persist(questionEntity);
-        return questionEntity;
-    }
-
-    //GET Question By UUID
-    public QuestionEntity getQuestionByUserId(final String uuid) {
-        try {
-            System.out.println("User Id: "+uuid);
-            return entityManager.createNamedQuery("questionByUserId", QuestionEntity.class).setParameter("uuid", uuid).getSingleResult();
-        }
-        catch (NoResultException nre) {
-            return null;
-        }
-
-
-
-    }
-
-    public QuestionEntity getQuestionByQUuid(final String uuid) {
-        try {
-            return entityManager.createNamedQuery("questionByUuid", QuestionEntity.class)
-                .setParameter("uuid", uuid).getSingleResult();
-        } catch (NoResultException nre) {
-            return null;
-        }
-    }
-
-    public void deleteQuestion(final String uuid) {
-        QuestionEntity questionEntity = getQuestionByQUuid(uuid);
-        entityManager.remove(questionEntity);
-    }
 
     public boolean userSignOutStatus(String authorizationToken) {
         UserAuthTokenEntity userAuthTokenEntity = getUserAuthToken(authorizationToken);
