@@ -75,15 +75,15 @@ public class UserController {
         return new ResponseEntity<com.upgrad.quora.api.model.SigninResponse>(authorizedUserResponse, headers, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/user/signout",
+   /* @RequestMapping(method = RequestMethod.POST, path = "/user/signout",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<com.upgrad.quora.api.model.SignoutResponse> logout(
             @RequestHeader("authorization") final String authorization)
             throws SignOutRestrictedException, AuthenticationFailedException {
 
-        String jwtToken = authenticationService.getBearerAccessToken(authorization);
+      //  String jwtToken = authenticationService.getBearerAccessToken(authorization);
 
-        UserAuthTokenEntity userAuthEntity = authenticationService.logoff(jwtToken);
+      //  UserAuthTokenEntity userAuthEntity = authenticationService.logoff(jwtToken);
         UserEntity user = userAuthEntity.getUser();
 
         com.upgrad.quora.api.model.SignoutResponse signoutResponse = new com.upgrad.quora.api.model.SignoutResponse().id(user.getUuid())
@@ -91,6 +91,6 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("access-token", userAuthEntity.getAccessToken());
         return new ResponseEntity<com.upgrad.quora.api.model.SignoutResponse>(signoutResponse, headers, HttpStatus.OK);
-    }
+    }*/
 
 }

@@ -23,6 +23,10 @@ public class UserProfileService {
     }
 
     //Chek if user has signed out
+    if (userDao.userSignOutStatus(accessToken)) {
+      throw new AuthorizationFailedException("ATHR-002",
+          "User is signed out.Sign in first to get user details");
+    }
 
 
     final UserEntity userDetails = userDao.getUserById(uuid);
