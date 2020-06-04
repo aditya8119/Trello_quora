@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
+
 @Service
 public class QuestionService {
     @Autowired
@@ -23,30 +27,48 @@ public class QuestionService {
     @Autowired
     private PasswordCryptographyProvider cryptographyProvider;
 
-    //getAccessToken
-    @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity getAccessToken(final String accessToken) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
-        if (userAuthTokenEntity == null) {
-            throw new AuthorizationFailedException("ATHR-001", "'User has not signed in");
-        }
-        return userAuthTokenEntity;
-    }
 
     //CreateQuestion Service
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity createQuestion(QuestionEntity questionEntity){
-                return questionDao.createQuestion(questionEntity);
+    public QuestionEntity createQuestion(final QuestionEntity questionEntity, final String authorization) throws AuthorizationFailedException {
+        //String [] bearerToken = authorization.split("Bearer ");
+        // System.out.println("Bearer Token "+bearerToken[1]);
+        System.out.println("Authorisation "+authorization);
+        UserAuthTokenEntity userAuthToken=userDao.getUserAuthToken(authorization);
+        if (userAuthToken == null) {
+            throw new AuthorizationFailedException("ATHR-001", "'User has not signed in");
+        }
+        if(userAuthToken.getLogoutAt()!=null)
+        {
+            throw new AuthorizationFailedException("ATHR-002",
+                    "User is signed out.Sign in first to post a question");
+        }
+        questionEntity.setUuid(UUID.randomUUID().toString());
+        questionEntity.setUser(userAuthToken.getUser());
+        questionEntity.setDate(ZonedDateTime.now());
+        return questionDao.createQuestion(questionEntity);
     }
 
     //Get Question By UUID
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity getQuestionByUserId(final String uuid) throws UserNotFoundException {
-        QuestionEntity questionEntity=questionDao.getQuestionByUserId(uuid);
-        if (questionEntity == null) {
+    public List<QuestionEntity> getQuestionByUserId(final String uuid, final String authorization) throws AuthorizationFailedException,UserNotFoundException {
+        //String [] bearerToken = authorization.split("Bearer ");
+        // System.out.println("Bearer Token "+bearerToken[1]);
+        System.out.println("Authorisation "+authorization);
+        UserAuthTokenEntity userAuthToken=userDao.getUserAuthToken(authorization);
+        if (userAuthToken == null) {
+            throw new AuthorizationFailedException("ATHR-001", "'User has not signed in");
+        }
+        if(userAuthToken.getLogoutAt()!=null)
+        {
+            throw new AuthorizationFailedException("ATHR-002",
+                    "User is signed out.Sign in first to get all questions posted by a specific user");
+        }
+        List<QuestionEntity> questionEntityList=questionDao.getQuestionByUserId(uuid);
+        if (questionEntityList.isEmpty() || questionEntityList.size()<=0) {
             throw new UserNotFoundException("USR-001", "User with entered uuid whose question details are to be seen does not exist");
         }
-        return questionEntity;
+        return questionEntityList;
     }
 
     /**
