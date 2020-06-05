@@ -103,7 +103,7 @@ public class AnswerController {
    * @param authorization To authenticate the user who is trying to edit the answer.
    * @param answerId Id of the answe which is to be edited.
    * @param answerEditRequest Contains the new content of the answer.
-   * @return
+   * @return ResponseEntity
    * @throws AuthorizationFailedException ATHR-001 If the user has not signed in and ATHR-002 If the
    *     user is already signed out and ATHR-003 if the user is not the owner of the answer.
    * @throws AnswerNotFoundException ANS-001 if the answer is not found in the database.
