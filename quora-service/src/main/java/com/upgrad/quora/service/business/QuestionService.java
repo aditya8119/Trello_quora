@@ -124,35 +124,37 @@ public class QuestionService {
         return questionEntityList;
     }
 
-    // An abstract interface checks whether the Question is asked by the owner
-
+    /**
+     * This is a Question edit service
+     *
+     * @param questionId The uuid of the question
+     * @param userAuthTokenEntity The JWT access token of the user passed in the request header.
+     * @param content Content to update
+     * @return question edit response
+     * @throws AuthorizationFailedException This exception is thrown if user has not signed in or if he is signed out or if non-owner edits the question
+     * @throws InvalidQuestionException     This exception is thrown if the uuid provided does not exists in the system
+     */
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity isUserQuestionOwner(String questionUuId, UserAuthTokenEntity authorizedUser, ActionType actionType) throws AuthorizationFailedException, InvalidQuestionException {
-        QuestionEntity question = questionDao.getQuestionById(questionUuId);
-        if (question == null) {
+    public QuestionEntity editQuestionContent(
+            String questionId,
+            UserAuthTokenEntity userAuthTokenEntity ,
+            String content)
+            throws AuthorizationFailedException, InvalidQuestionException {
+
+        QuestionEntity questionEntity = questionDao.getQuestionById(questionId);
+
+        if (userAuthTokenEntity.getLogoutAt() != null) {
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to edit the question");
+        } else if (questionEntity == null) {
             throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
-        } else if (!question.getUser().getUuid().equals(authorizedUser.getUser().getUuid())) {
-            if (actionType.equals(ActionType.DELETE_QUESTION)) {
-                if (authorizedUser.getUser().getRole().equals(RoleType.admin.toString())) {
-                    return question;
-                } else {
-                    throw new AuthorizationFailedException("ATHR-003", "Only the question owner or admin can delete the question");
-                }
-
-            } else {
-                throw new AuthorizationFailedException("ATHR-003", "Only the question owner can edit the question");
-            }
-        } else {
-            return question;
         }
-    }
-
-
-    //An abstract interface to edit the Question
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void editQuestion(QuestionEntity question) {
-        questionDao.editQuestion(question);
+        Integer authUserId = userAuthTokenEntity.getUser().getId();
+        Integer queUserId = questionEntity.getUser().getId();
+        if (!authUserId.equals(queUserId)){
+            throw new AuthorizationFailedException("ATHR-003", "Only the question owner can edit the question");
+        }
+        questionEntity.setContent(content);
+        return  questionDao.editQuestion(questionEntity);
     }
 
 }
