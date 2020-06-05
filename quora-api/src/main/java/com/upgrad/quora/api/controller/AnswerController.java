@@ -3,6 +3,7 @@ package com.upgrad.quora.api.controller;
 import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.business.AnswerService;
 import com.upgrad.quora.service.business.AuthorizationService;
+import com.upgrad.quora.service.business.SignoutService;
 import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AnswerNotFoundException;
@@ -28,6 +29,9 @@ public class AnswerController {
 
   @Autowired
   private AuthorizationService authorizationService;
+
+  @Autowired
+  private SignoutService signoutService;
 
   /**
    * Api for creating an answer
@@ -93,15 +97,35 @@ public class AnswerController {
     return new ResponseEntity<>(answerOutputList, HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.PUT, path = "/answer/edit/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<?> editAnswerContent(AnswerEditRequest answerEditRequest, @PathVariable("answerId") final String answerUuId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
-    UserAuthTokenEntity userAuthTokenEntity = authorizationService.isValidActiveAuthToken(authorization, ActionType.EDIT_ANSWER);
-    AnswerEntity answer = answerService.isUserAnswerOwner(answerUuId, userAuthTokenEntity, ActionType.EDIT_ANSWER);
-    answer.setAnswer(answerEditRequest.getContent());
-    answer.setDate(ZonedDateTime.now());
-    AnswerEntity editedAnswer = answerService.editAnswer(answer);
-    AnswerEditResponse answerEditResponse = new AnswerEditResponse().id(answerUuId).status("ANSWER EDITED");
-    return new ResponseEntity<AnswerEditResponse>(answerEditResponse, HttpStatus.OK);
+  /**
+   * This API edits the answer which already exist in the database.
+   *
+   * @param authorization To authenticate the user who is trying to edit the answer.
+   * @param answerId Id of the answe which is to be edited.
+   * @param answerEditRequest Contains the new content of the answer.
+   * @return
+   * @throws AuthorizationFailedException ATHR-001 If the user has not signed in and ATHR-002 If the
+   *     user is already signed out and ATHR-003 if the user is not the owner of the answer.
+   * @throws AnswerNotFoundException ANS-001 if the answer is not found in the database.
+   */
+  @RequestMapping(method = RequestMethod.PUT,
+          path = "/answer/edit/{answerId}",
+          consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+          produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<AnswerEditResponse> editAnswerContent(
+          final AnswerEditRequest answerEditRequest,
+          @PathVariable("answerId") final String answerId,
+          @RequestHeader("authorization") final String authorization)
+          throws AuthorizationFailedException, AnswerNotFoundException {
+
+    UserAuthTokenEntity userAuthTokenEntity = signoutService.getUser(authorization);
+
+    AnswerEntity answerEntity = answerService.getAnswerFromId(answerId);
+    AnswerEntity checkedAnswer = answerService.checkAnswerBelongToUser(userAuthTokenEntity, answerEntity);
+    checkedAnswer.setAnswer(answerEditRequest.getContent());
+    AnswerEntity updatedAnswer = answerService.updateAnswer(checkedAnswer);
+    AnswerEditResponse answerEditResponse = new AnswerEditResponse().id(updatedAnswer.getUuid()).status("ANSWER EDITED");
+    return new ResponseEntity<AnswerEditResponse>(answerEditResponse,HttpStatus.OK);
   }
 
 }
