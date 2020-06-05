@@ -7,6 +7,8 @@ import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
+import com.upgrad.quora.service.type.ActionType;
+import com.upgrad.quora.service.type.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -120,6 +122,37 @@ public class QuestionService {
         List<QuestionEntity> questionEntityList=questionDao.getAllQuestions();
 
         return questionEntityList;
+    }
+
+    // An abstract interface checks whether the Question is asked by the owner
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public QuestionEntity isUserQuestionOwner(String questionUuId, UserAuthTokenEntity authorizedUser, ActionType actionType) throws AuthorizationFailedException, InvalidQuestionException {
+        QuestionEntity question = questionDao.getQuestionById(questionUuId);
+        if (question == null) {
+            throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
+        } else if (!question.getUser().getUuid().equals(authorizedUser.getUser().getUuid())) {
+            if (actionType.equals(ActionType.DELETE_QUESTION)) {
+                if (authorizedUser.getUser().getRole().equals(RoleType.admin.toString())) {
+                    return question;
+                } else {
+                    throw new AuthorizationFailedException("ATHR-003", "Only the question owner or admin can delete the question");
+                }
+
+            } else {
+                throw new AuthorizationFailedException("ATHR-003", "Only the question owner can edit the question");
+            }
+        } else {
+            return question;
+        }
+    }
+
+
+    //An abstract interface to edit the Question
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void editQuestion(QuestionEntity question) {
+        questionDao.editQuestion(question);
     }
 
 }

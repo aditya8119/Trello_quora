@@ -4,11 +4,15 @@ import com.upgrad.quora.api.model.QuestionDeleteResponse;
 import com.upgrad.quora.api.model.QuestionDetailsResponse;
 import com.upgrad.quora.api.model.QuestionRequest;
 import com.upgrad.quora.api.model.QuestionResponse;
+import com.upgrad.quora.api.model.QuestionEditResponse;
+import com.upgrad.quora.service.business.AuthorizationService;
 import com.upgrad.quora.service.business.QuestionService;
 import com.upgrad.quora.service.entity.QuestionEntity;
+import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
+import com.upgrad.quora.service.type.ActionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +28,10 @@ public class QuestionController {
 
     @Autowired
     QuestionService questionService;
+
+    @Autowired
+    private AuthorizationService authorizationService;
+
 
     //Create Question API
     @RequestMapping(method = RequestMethod.POST, path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -84,6 +92,20 @@ public class QuestionController {
         }
 
         return new ResponseEntity<>(questionOutputList, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/question/edit/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> editQuestionContent(QuestionEditRequest questionEditRequest,
+                                                 @PathVariable("questionId") final String questionId, @RequestHeader("authorization") final String authorization) throws
+            AuthorizationFailedException, InvalidQuestionException {
+        UserAuthTokenEntity userAuthTokenEntity = authorizationService.isValidActiveAuthToken(authorization, ActionType.EDIT_QUESTION);
+        QuestionEntity question = questionService.isUserQuestionOwner(questionId, userAuthTokenEntity, ActionType.EDIT_QUESTION);
+        question.setContent(questionEditRequest.getContent());
+        //edits the question
+        questionService.editQuestion(question);
+        QuestionEditResponse questionEditResponse = new QuestionEditResponse().id(question.getUuid()).status("QUESTION EDITED");
+        return new ResponseEntity<QuestionEditResponse>(questionEditResponse, HttpStatus.OK);
     }
 }
 

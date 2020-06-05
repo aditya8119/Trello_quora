@@ -65,4 +65,10 @@ public class QuestionDao {
     }
   }
 
+
+  public QuestionEntity editQuestion(QuestionEntity question) {
+    entityManager.persist(question);
+    return question;
+  }
+
 }
