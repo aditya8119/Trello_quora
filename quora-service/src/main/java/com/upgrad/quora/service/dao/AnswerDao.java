@@ -50,4 +50,22 @@ public class AnswerDao {
     }
   }
 
+  public AnswerEntity checkAnswerBelongToUser(String auuid, String uuuid) {
+
+    try {
+      return entityManager.createNamedQuery("checkAnswerBelongToUser", AnswerEntity.class)
+              .setParameter("auuid", auuid)
+              .setParameter("uuuid",uuuid)
+              .getSingleResult();
+    }catch (NoResultException nre)
+    {
+      return null;
+    }
+  }
+
+  public AnswerEntity updateAnswer(AnswerEntity answerEntity)
+  {
+    return entityManager.merge(answerEntity);
+  }
+
 }
