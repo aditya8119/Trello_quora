@@ -9,6 +9,8 @@ import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AnswerNotFoundException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
+import com.upgrad.quora.service.type.ActionType;
+import com.upgrad.quora.service.type.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -122,6 +124,33 @@ public class AnswerService {
     List<AnswerEntity> answerEntityList=answerDao.getAllAnswersToQuestion(questionId);
     return answerEntityList;
 
+  }
+
+  // Checks whether answer owner edits the answer and provides proper response to user
+  @Transactional(propagation = Propagation.REQUIRED)
+  public AnswerEntity isUserAnswerOwner(String answerUuId, UserAuthTokenEntity authorizedUser, ActionType actionType) throws AnswerNotFoundException, AuthorizationFailedException {
+    AnswerEntity answer = answerDao.getAnswerByUUId(answerUuId);
+
+    if (answer == null) {
+      throw new AnswerNotFoundException("ANS-001", "Entered answer uuid does not exist");
+    } else if (!authorizedUser.getUser().getUuid().equals(answer.getUser().getUuid())) {
+      if (ActionType.EDIT_ANSWER.equals(actionType)) {
+        throw new AuthorizationFailedException("ATHR-003", "Only the answer owner can edit the answer");
+      } else {
+        throw new AuthorizationFailedException("ATHR-003", "Only the answer owner or admin can delete the answer");
+      }
+    } else if ((!authorizedUser.getUser().getRole().equals(RoleType.admin)
+            && !authorizedUser.getUser().getUuid().equals(answer.getUser().getUuid()))
+            && ActionType.DELETE_ANSWER.equals(actionType)) {
+      throw new AuthorizationFailedException("ATHR-003", "Only the answer owner or admin can delete the answer");
+    } else {
+      return answer;
+    }
+  }
+  //An abstract interface for editing answer
+  @Transactional(propagation = Propagation.REQUIRED)
+  public AnswerEntity editAnswer(AnswerEntity answer) {
+    return answerDao.editAnswer(answer);
   }
 
 }

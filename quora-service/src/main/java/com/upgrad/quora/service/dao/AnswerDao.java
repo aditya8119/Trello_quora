@@ -30,6 +30,11 @@ public class AnswerDao {
     }
   }
 
+  public AnswerEntity editAnswer(AnswerEntity answer) {
+    entityManager.persist(answer);
+    return answer;
+  }
+
   //Delete Answer By UUID
   public void deleteAnswer(final String uuid) {
     AnswerEntity answerEntity = getAnswerByUUId(uuid);
