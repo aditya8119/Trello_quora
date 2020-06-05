@@ -2,6 +2,7 @@ package com.upgrad.quora.service.business;
 
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
+import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,16 @@ public class SignoutService {
 
     @Autowired
     AuthorizationService authorizationService;
+
+    @Transactional
+    public UserAuthTokenEntity getUser(final String authorizationToken) throws AuthorizationFailedException {
+
+        UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorizationToken);
+        if (userAuthEntity == null) {
+            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+        }
+        return userAuthEntity;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public String signOut(final String authorization)
