@@ -30,6 +30,11 @@ public class AnswerDao {
     }
   }
 
+  public AnswerEntity editAnswer(AnswerEntity answer) {
+    entityManager.persist(answer);
+    return answer;
+  }
+
   //Delete Answer By UUID
   public void deleteAnswer(final String uuid) {
     AnswerEntity answerEntity = getAnswerByUUId(uuid);
@@ -43,6 +48,24 @@ public class AnswerDao {
     } catch (NoResultException nre) {
       return null;
     }
+  }
+
+  public AnswerEntity checkAnswerBelongToUser(String auuid, String uuuid) {
+
+    try {
+      return entityManager.createNamedQuery("checkAnswerBelongToUser", AnswerEntity.class)
+              .setParameter("auuid", auuid)
+              .setParameter("uuuid",uuuid)
+              .getSingleResult();
+    }catch (NoResultException nre)
+    {
+      return null;
+    }
+  }
+
+  public AnswerEntity updateAnswer(AnswerEntity answerEntity)
+  {
+    return entityManager.merge(answerEntity);
   }
 
 }

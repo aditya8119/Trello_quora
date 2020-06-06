@@ -5,6 +5,7 @@ import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.entity.QuestionEntity;
+import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AnswerNotFoundException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
@@ -123,5 +124,41 @@ public class AnswerService {
     return answerEntityList;
 
   }
+
+
+  @Transactional(propagation = Propagation.REQUIRED)
+  public AnswerEntity getAnswerFromId(String uuid) throws AnswerNotFoundException {
+    AnswerEntity answerEntity = answerDao.getAnswerByUUId(uuid);
+    if (answerEntity == null)
+    {
+      throw new AnswerNotFoundException("ANS-001","Entered answer uuid does not exist");
+    }
+    return answerEntity;
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED)
+  public AnswerEntity checkAnswerBelongToUser(UserAuthTokenEntity userAuthTokenEntity, AnswerEntity answerEntity) throws AuthorizationFailedException {
+
+    UserEntity userEntity = userAuthTokenEntity.getUser();
+
+    if(userAuthTokenEntity.getLogoutAt()!=null){
+      throw new AuthorizationFailedException("ATHR-002" ,"User is signed out.Sign in first to edit an answer");
+    }
+    String auuid = answerEntity.getUuid();
+    String uuuid = userEntity.getUuid();
+    AnswerEntity checkedAnswer = answerDao.checkAnswerBelongToUser(auuid,uuuid);
+    if(checkedAnswer==null)
+    {
+      throw new AuthorizationFailedException("ATHR-003","Only the answer owner can edit or delete the answer");
+    }
+    return checkedAnswer;
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED)
+  public AnswerEntity updateAnswer(AnswerEntity answerEntity)
+  {
+    return answerDao.updateAnswer(answerEntity);
+  }
+
 
 }

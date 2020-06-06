@@ -144,6 +144,11 @@ public class UserDao {
 
     }
 
+    public UserAuthTokenEntity setUserLogout(final UserAuthTokenEntity userAuthTokenEntity){
+        entityManager.persist(userAuthTokenEntity);
+        return userAuthTokenEntity;
+    }
+
 
     public boolean userSignOutStatus(String authorizationToken) {
         UserAuthTokenEntity userAuthTokenEntity = getUserAuthToken(authorizationToken);
