@@ -7,6 +7,7 @@ import com.upgrad.quora.api.model.QuestionResponse;
 import com.upgrad.quora.api.model.QuestionEditResponse;
 import com.upgrad.quora.service.business.AuthorizationService;
 import com.upgrad.quora.service.business.QuestionService;
+import com.upgrad.quora.service.business.SignoutService;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
@@ -31,6 +32,9 @@ public class QuestionController {
 
     @Autowired
     private AuthorizationService authorizationService;
+
+    @Autowired
+    private SignoutService signoutService;
 
 
     //Create Question API
@@ -94,18 +98,33 @@ public class QuestionController {
         return new ResponseEntity<>(questionOutputList, HttpStatus.OK);
     }
 
+    /**
+     * This method is used to edit a question that has been posted by a user.
+     *
+     * @param questionId        The uuid of the question
+     * @param questionEditRequest The edited question details
+     * @param authorization       The JWT access token of the user passed in the request header.
+     * @return ResponseEntity
+     * @throws AuthorizationFailedException This exception is thrown if user has not signed in or if he is signed out or if non-owner edits the question
+     * @throws InvalidQuestionException     This exception is thrown if the uuid provided does not exists in the system
+     */
+    @RequestMapping(method = RequestMethod.PUT,
+            path = "/question/edit/{questionId}",
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ResponseEntity<QuestionEditResponse> editQuestionContent(
+            @PathVariable("questionId") final String questionId,
+            @RequestHeader("authorization") final String authorization,
+            QuestionEditRequest questionEditRequest)
+            throws AuthorizationFailedException,InvalidQuestionException {
 
-    @RequestMapping(method = RequestMethod.PUT, path = "/question/edit/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> editQuestionContent(QuestionEditRequest questionEditRequest,
-                                                 @PathVariable("questionId") final String questionId, @RequestHeader("authorization") final String authorization) throws
-            AuthorizationFailedException, InvalidQuestionException {
-        UserAuthTokenEntity userAuthTokenEntity = authorizationService.isValidActiveAuthToken(authorization, ActionType.EDIT_QUESTION);
-        QuestionEntity question = questionService.isUserQuestionOwner(questionId, userAuthTokenEntity, ActionType.EDIT_QUESTION);
-        question.setContent(questionEditRequest.getContent());
-        //edits the question
-        questionService.editQuestion(question);
-        QuestionEditResponse questionEditResponse = new QuestionEditResponse().id(question.getUuid()).status("QUESTION EDITED");
-        return new ResponseEntity<QuestionEditResponse>(questionEditResponse, HttpStatus.OK);
+        final UserAuthTokenEntity userAuthEntity = signoutService.getUser(authorization);
+        String content = questionEditRequest.getContent();
+
+        QuestionEntity editedQuestion = questionService.editQuestionContent(questionId,userAuthEntity, content);
+        QuestionEditResponse questionEditResponse = new QuestionEditResponse().id(editedQuestion.getUuid()).status("QUESTION EDITED");
+
+        return new ResponseEntity<QuestionEditResponse>(questionEditResponse,HttpStatus.OK);
     }
 }
 

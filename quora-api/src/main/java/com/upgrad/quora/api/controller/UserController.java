@@ -86,14 +86,28 @@ public class UserController {
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, path = "/user/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SignoutResponse> signout(@RequestHeader("authorization") final String authorization) throws SignOutRestrictedException {
-        String Uuid = signoutService.signOut(authorization);
+    /**
+     * This method exposes endpoint to signout a user in the Quora Application
+     *
+     * @param authorization The signout user request details
+     * @return ResponseEntity
+     * @throws SignOutRestrictedException This exception is thrown if either given username or email address already exists in the application
+     */
+    @RequestMapping(method = RequestMethod.POST,
+            path = "/user/signout",
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<SignoutResponse> signout(
+            @RequestHeader("authorization") final String authorization)
+            throws SignOutRestrictedException {
+        String userUUID = signoutService.signOut(authorization);
 
-        SignoutResponse signoutResponse = new SignoutResponse().id(Uuid)
+        SignoutResponse signoutResponse = new SignoutResponse().id(userUUID)
                 .message("SIGNED OUT SUCCESSFULLY");
 
-        return new ResponseEntity<SignoutResponse>(signoutResponse, HttpStatus.OK);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("user-uuid", userUUID);
+
+        return new ResponseEntity<SignoutResponse>(signoutResponse, headers, HttpStatus.OK);
     }
 
 }
