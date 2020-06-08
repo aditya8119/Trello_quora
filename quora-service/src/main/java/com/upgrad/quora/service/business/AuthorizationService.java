@@ -14,19 +14,35 @@ public class AuthorizationService {
     @Autowired
     private UserDao userDao;
 
-    //To check if the user with the access token is signed in / access token exists in the table
-    //Returns boolean based on whether the access token is present in the table
+
+    /**
+     * Method to check if user has signed in
+     * @param authorization access token of the user
+     * @return true if signed in false if not signed in
+     */
     public boolean hasUserSignedIn(final String authorization) {
         return userDao.hasUserSignedIn(authorization);
     }
 
 
-    //Written for all authorization calls for all controllers
+    /**
+     * Method to check is the token is valid
+     * @param authorization
+     * @param actionType
+     * @return authorized user entity
+     * @throws AuthorizationFailedException
+     */
     public UserAuthTokenEntity isValidActiveAuthToken(final String authorization, Enum<ActionType> actionType) throws AuthorizationFailedException {
         return userDao.isValidActiveAuthToken(authorization, actionType);
     }
 
 
+    /**
+     * Method to fetch the token entity
+     * @param authorization access token of the user
+     * @return Auhorized user entity
+     * @throws SignOutRestrictedException
+     */
     public UserAuthTokenEntity fetchAuthTokenEntity(final String authorization) throws SignOutRestrictedException {
         final UserAuthTokenEntity fetchedUserAuthTokenEntity = userDao.getUserAuthToken(authorization);
         return fetchedUserAuthTokenEntity;
