@@ -17,6 +17,13 @@ public class SignupBusinessService {
     @Autowired
     private PasswordCryptographyProvider cryptographyProvider;
 
+    /**
+     * Signup Business Service to signup new user
+     * @param userEntity UserEntity object containing details of the user
+     * @return UserEntity
+     * @throws SignUpRestrictedException SGR-001 Try any other Username, this Username has already been taken, SGR-002 his user has already been registered, try with any other emailId
+     */
+
     @Transactional(propagation = Propagation.REQUIRED)
     public UserEntity signup(UserEntity userEntity) throws SignUpRestrictedException {
 

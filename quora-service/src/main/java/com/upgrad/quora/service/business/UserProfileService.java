@@ -15,6 +15,14 @@ public class UserProfileService {
   @Autowired
   private UserDao userDao;
 
+  /**
+   * Service to get User details when UUID of the user is provided
+   * @param uuid UUID of the User
+   * @param accessToken Access Token provided in the HTTP Request Header
+   * @return UserEntity
+   * @throws AuthorizationFailedException ATHR-001 User has not signed in, ATHR-002 User is signed out.Sign in first to get user details
+   * @throws UserNotFoundException USR-001 User with entered uuid does not exist
+   */
   public UserEntity getUserByUuid(final String uuid, final String accessToken)
       throws AuthorizationFailedException, UserNotFoundException {
 
