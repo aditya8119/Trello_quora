@@ -43,6 +43,7 @@ public class QuestionEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
     private UserEntity user;
 
     public Integer getId() {

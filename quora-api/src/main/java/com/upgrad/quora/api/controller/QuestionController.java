@@ -1,10 +1,6 @@
 package com.upgrad.quora.api.controller;
 
-import com.upgrad.quora.api.model.QuestionDeleteResponse;
-import com.upgrad.quora.api.model.QuestionDetailsResponse;
-import com.upgrad.quora.api.model.QuestionRequest;
-import com.upgrad.quora.api.model.QuestionResponse;
-import com.upgrad.quora.api.model.QuestionEditResponse;
+import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.business.AuthorizationService;
 import com.upgrad.quora.service.business.QuestionService;
 import com.upgrad.quora.service.business.SignoutService;

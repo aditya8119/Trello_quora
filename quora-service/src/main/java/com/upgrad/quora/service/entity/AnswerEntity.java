@@ -1,5 +1,8 @@
 package com.upgrad.quora.service.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -36,10 +39,14 @@ public class AnswerEntity {
 
   @ManyToOne
   @JoinColumn(name = "user_id")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @NotNull
   private UserEntity user;
 
   @ManyToOne
   @JoinColumn(name = "question_id")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @NotNull
   private QuestionEntity question;
 
   public long getId() {

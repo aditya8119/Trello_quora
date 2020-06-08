@@ -40,18 +40,20 @@ public class UserEntity implements Serializable {
     @Size(max = 30)
     private String lastName;
 
-    @Column(name = "USERNAME")
+    @Column(name = "USERNAME", unique = true)
     @NotNull
     @Size(max = 30)
     private String username;
 
-    @Column(name = "EMAIL")
+    @Column(name = "EMAIL",unique = true)
     @NotNull
     @Size(max = 50)
     private String email;
 
     @ToStringExclude
     @Column(name = "PASSWORD")
+    @NotNull
+    @Size(max = 255)
     private String password;
 
     @Column(name = "SALT")
@@ -61,27 +63,22 @@ public class UserEntity implements Serializable {
     private String salt;
 
     @Column(name = "COUNTRY")
-    @NotNull
     @Size(max = 30)
     private String country;
 
     @Column(name = "ABOUTME")
-    @NotNull
     @Size(max = 50)
     private String aboutMe;
 
     @Column
-    @NotNull
     @Size(max = 30)
     private String dob;
 
     @Column(name = "ROLE")
-    @NotNull
     @Size(max = 30)
     private String role;
 
     @Column(name = "CONTACTNUMBER")
-    @NotNull
     @Size(max = 30)
     private String contactNumber;
 
