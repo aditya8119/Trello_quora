@@ -9,7 +9,7 @@ import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
-import com.upgrad.quora.service.type.ActionType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,7 +33,15 @@ public class QuestionController {
     private SignoutService signoutService;
 
 
-    //Create Question API
+    /**
+     * This method is used to create a question for the user Id
+     *
+     * @param createQuestionRequest Content of the question
+     * @param authorization Access Token
+     * @return responseEntity
+     * @throws AuthorizationFailedException ATHR-001- 'User has not signed in' ,
+         'ATHR-002' - 'User is signed out.Sign in first to post a question'
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(final QuestionRequest createQuestionRequest,@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
 
@@ -46,7 +54,15 @@ public class QuestionController {
         return new ResponseEntity<QuestionResponse>(questionResponse, HttpStatus.CREATED);
     }
 
-    //Get Question By User Id
+    /**
+     * This method is used to get all questions posted by a user Id
+     *
+     * @param uuid UUID of the question
+     * @param authorization Access Token
+     * @return responseEntity
+     * @throws AuthorizationFailedException ATHR-001- 'User has not signed in'
+     * @throws UserNotFoundException 'ATHR-002' - 'User is signed out.Sign in first to get all questions posted by a specific user'
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/question/all/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getQuestionByUserId(@PathVariable("userId") final String uuid, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, UserNotFoundException {
 
@@ -63,6 +79,17 @@ public class QuestionController {
         return new ResponseEntity<>(questionOutputList, HttpStatus.OK);
     }
 
+    /**
+     * This method is used to delete a question
+     *
+     * @param questionId UUID of the question
+     * @param authorization Access Token
+     * @return responseEntity
+     * @throws AuthorizationFailedException ATHR-001- 'User has not signed in',
+      'ATHR-002'-'User is signed out.Sign in first to delete a question',
+      'ATHR-003'-'Only the question owner or admin can delete the question'
+     * @throws InvalidQuestionException 'QUES-001' - 'Entered question uuid does not exist'
+     */
     @RequestMapping(method = RequestMethod.DELETE, path = "/question/delete/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionDeleteResponse> deleteQuestion(
         @PathVariable("questionId") final String questionId,
@@ -78,6 +105,14 @@ public class QuestionController {
         return new ResponseEntity<QuestionDeleteResponse>(questionDeleteResponse, HttpStatus.OK);
     }
 
+    /**
+     * This method is used to get All Questions posted by any user
+     *
+     * @param authorization Access Token
+     * @return responseEntity
+     * @throws AuthorizationFailedException ATHR-001- 'User has not signed in',
+    'ATHR-002'-'User is signed out.Sign in first to get all questions'
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
 
@@ -99,10 +134,12 @@ public class QuestionController {
      *
      * @param questionId        The uuid of the question
      * @param questionEditRequest The edited question details
-     * @param authorization       The JWT access token of the user passed in the request header.
+     * @param authorization    Access Token
      * @return ResponseEntity
-     * @throws AuthorizationFailedException This exception is thrown if user has not signed in or if he is signed out or if non-owner edits the question
-     * @throws InvalidQuestionException     This exception is thrown if the uuid provided does not exists in the system
+     * @throws AuthorizationFailedException ATHR-001- 'User has not signed in',
+    'ATHR-002'-'User is signed out.Sign in first to edit the question',
+    'ATHR-003'-'Only the question owner can edit the question'
+     * @throws InvalidQuestionException     'QUES-001' - 'Entered question uuid does not exist'
      */
     @RequestMapping(method = RequestMethod.PUT,
             path = "/question/edit/{questionId}",

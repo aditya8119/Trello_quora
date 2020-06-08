@@ -4,6 +4,7 @@ import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +21,12 @@ public class SignoutService {
     @Autowired
     AuthorizationService authorizationService;
 
+    /**
+     * Service to get User Details based on access Token
+     * @param authorizationToken Access Token provided in the HTTP Request
+     * @return UserAuthTokenEntity
+     * @throws AuthorizationFailedException ATHR-001 User has not signed in
+     */
     @Transactional
     public UserAuthTokenEntity getUser(final String authorizationToken) throws AuthorizationFailedException {
 
@@ -30,6 +37,12 @@ public class SignoutService {
         return userAuthEntity;
     }
 
+    /**
+     * Signout Service to signout User
+     * @param authorization Access Token
+     * @return UserDao
+     * @throws SignOutRestrictedException SGR-001 User is not Signed in, SGR-002 User is already SignOut
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public String signOut(final String authorization)
             throws SignOutRestrictedException {

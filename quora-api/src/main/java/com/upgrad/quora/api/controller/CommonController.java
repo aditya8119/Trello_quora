@@ -6,6 +6,7 @@ import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,12 +24,12 @@ public class CommonController {
   private UserProfileService userProfileService;
 
   /**
-   * Api to get user profile details with uuid
-   * @param uuid
-   * @param accessToken
-   * @return
-   * @throws AuthorizationFailedException
-   * @throws UserNotFoundException
+   * API to get userProfile details with UUID
+   * @param uuid UUID of the User
+   * @param accessToken Access Token
+   * @return ResponseEntity
+   * @throws AuthorizationFailedException ATHR-001 User has not signed in, ATHR-002 User is signed out.Sign in first to get user details
+   * @throws UserNotFoundException USR-001 User with entered uuid does not exist
    */
   @RequestMapping(method = RequestMethod.GET, path = "/userprofile/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<UserDetailsResponse> userProfile(@PathVariable("userId") final String uuid,

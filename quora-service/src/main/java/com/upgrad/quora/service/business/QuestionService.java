@@ -7,8 +7,7 @@ import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
-import com.upgrad.quora.service.type.ActionType;
-import com.upgrad.quora.service.type.RoleType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,6 +30,14 @@ public class QuestionService {
 
 
     //CreateQuestion Service
+
+    /**
+     * Service to Create question
+     * @param questionEntity Question Content
+     * @param authorization Access Token
+     * @return QuestionEntity
+     * @throws AuthorizationFailedException ATHR-001 User has not signed in, ATHR-002 User is signed out.Sign in first to post a question
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public QuestionEntity createQuestion(final QuestionEntity questionEntity, final String authorization) throws AuthorizationFailedException {
         //String [] bearerToken = authorization.split("Bearer ");
@@ -52,6 +59,15 @@ public class QuestionService {
     }
 
     //Get Question By UUID
+
+    /**
+     * Service to get question when UUID is provided
+     * @param uuid UUID of the question
+     * @param authorization Access Token
+     * @return <List>QuestionEntity
+     * @throws AuthorizationFailedException  ATHR-001 User has not signed in, ATHR-002 User is signed out.Sign in first to get all questions posted by a specific user
+     * @throws UserNotFoundException USR-001 User with entered uuid whose question details are to be seen does not exist
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public List<QuestionEntity> getQuestionByUserId(final String uuid, final String authorization) throws AuthorizationFailedException,UserNotFoundException {
         //String [] bearerToken = authorization.split("Bearer ");
@@ -74,8 +90,15 @@ public class QuestionService {
     }
 
     /**
+     * Service to Delete Question
      * @param  questionId the first {@code String} id of the question to be deleted
      * @param  authorization the second {@code String} to check if the access is available.
+     * @throws AuthorizationFailedException ATHR-001 User has not signed in
+     *                                      ATHR-002 User is signed out.Sign in first to delete a question
+     *                                      ATHR-003 Only the question owner or admin can delete the question
+     * @throws InvalidQuestionException     QUES-001 Entered question uuid does not exist
+     *
+     *
      */
     @Transactional(propagation = Propagation.REQUIRED)
     public void deleteQuestion(final String questionId, final String authorization) throws InvalidQuestionException, AuthorizationFailedException {
@@ -106,9 +129,14 @@ public class QuestionService {
         questionDao.deleteQuestion(questionId);
     }
 
+    /**
+     * Service to get All Questions
+     * @param authorization Access Token
+     * @return <List>QuestionEntity
+     * @throws AuthorizationFailedException ATHR-001 User has not signed in, ATHR-002 User is signed out.Sign in first to get all questions posted by a specific user
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public List<QuestionEntity> getAllQuestions(final String authorization) throws AuthorizationFailedException{
-        System.out.println("QuestionService.getAllQuestions: authorization :"+ authorization);
         UserAuthTokenEntity userAuthToken=userDao.getUserAuthToken(authorization);
         if (userAuthToken == null) {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
