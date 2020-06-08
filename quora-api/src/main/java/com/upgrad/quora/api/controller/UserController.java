@@ -13,6 +13,7 @@ import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,12 @@ public class UserController {
     @Autowired
     PasswordCryptographyProvider cryptographyProvider;
 
+    /**
+     *
+     * @param signupUserRequest User Details
+     * @return Response Entity
+     * @throws SignUpRestrictedException SGR-001 Try any other Username, this Username has already been taken, SGR-002 This user has already been registered, try with any other emailId
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/user/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignupUserResponse> signup(final SignupUserRequest signupUserRequest) throws SignUpRestrictedException {
 
@@ -65,6 +72,13 @@ public class UserController {
     }
 
     //Sign In API
+
+    /**
+     *
+     * @param authorization Bearer Credentials encoded in Base64
+     * @return ResponseEntity
+     * @throws AuthenticationFailedException ATH-001 This username does not exist, ATH-002 Password failed
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/user/signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<com.upgrad.quora.api.model.SigninResponse> signin(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
 
@@ -72,12 +86,10 @@ public class UserController {
         byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
         String decodedText = new String(decode);
         String[] decodedArray = decodedText.split(":");
-        System.out.println("Username :"+decodedArray[0]);
-        System.out.println("Password :"+decodedArray[1]);
         UserAuthTokenEntity userAuthToken = authenticationService.authenticate(decodedArray[0], decodedArray[1]);
         UserEntity user = userAuthToken.getUser();
 
-        com.upgrad.quora.api.model.SigninResponse authorizedUserResponse = new com.upgrad.quora.api.model.SigninResponse().id(user.getUuid())
+        SigninResponse authorizedUserResponse = new SigninResponse().id(user.getUuid())
                 .message("SIGNED IN SUCCESSFULLY");
 
         HttpHeaders headers = new HttpHeaders();
