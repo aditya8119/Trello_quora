@@ -1,4 +1,4 @@
-# Developers
+### Developers
 1. Aditya Balasubramanyam
 Github Account : adbalasu (Primary) , aditya8119 (For checking in Stub Code)
 
@@ -12,7 +12,7 @@ Github Account : sri-swetha
 Github Account : urmilaunni88
 
 
-# Trello_quora
+### Trello_quora
 
 This project is a basic implementation for the backend for a Question Answer Forum.
 
@@ -33,7 +33,7 @@ The following REST API's have been implemented :
 13. deleteAnswer - "/answer/delete/{answerId}"
 14. getAllAnswersToQuestion - "answer/all/{questionId}"
 
-# Specifications :
+### Specifications :
 JDK Version : 1.8.0_241
 Spring Boot : 2.0.1
 Spring Framework : 5.0.8
@@ -42,14 +42,14 @@ Database : Postgre SQL
 Database Driver Version : 42.2.2
 Build Tool : Apache Maven 
 
-# To Build first time (includes Database Setup)
-Navigate into the folder quora-db
+### To Build first time (includes Database Setup)
+Navigate into the folder quora-db :
 mvn clean install -Psetup
 
-# To Build
+### To Build
 mvn clean install
 
-#To Build without Tests
+### To Build without Tests
 mvn clean install -DskipTests
 
 
