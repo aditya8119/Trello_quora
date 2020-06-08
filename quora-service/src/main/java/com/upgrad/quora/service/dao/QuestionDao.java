@@ -21,7 +21,7 @@ public class QuestionDao {
     return questionEntity;
   }
 
-  //GET Question By UUID
+  //To get All the questions posted by a particular user ID
   public List<QuestionEntity> getQuestionByUserId(final String uuid) {
     try {
       System.out.println("User Id: " + uuid);
@@ -31,7 +31,8 @@ public class QuestionDao {
       return null;
     }
   }
-  //GET Question By UUID
+
+  //GET Question By Question UUID
   public QuestionEntity getQuestionByQUuid(final String uuid) {
     try {
       return entityManager.createNamedQuery("questionByUuid", QuestionEntity.class)
@@ -41,21 +42,13 @@ public class QuestionDao {
     }
   }
 
+  //To delete a question
   public void deleteQuestion(final String uuid) {
     QuestionEntity questionEntity = getQuestionByQUuid(uuid);
     entityManager.remove(questionEntity);
   }
 
-
-  public QuestionEntity getQuestionById(String questionId) {
-    try {
-      return entityManager.createNamedQuery("questionByUuid", QuestionEntity.class)
-          .setParameter("uuid", questionId).getSingleResult();
-    } catch (NoResultException nre) {
-      return null;
-    }
-  }
-
+  //To get All questions
   public List<QuestionEntity> getAllQuestions(){
     try {
       return entityManager.createNamedQuery("allQuestions", QuestionEntity.class).getResultList();
@@ -65,7 +58,7 @@ public class QuestionDao {
     }
   }
 
-
+  //To edit a question
   public QuestionEntity editQuestion(QuestionEntity question) {
     entityManager.persist(question);
     return question;

@@ -14,6 +14,7 @@ public class AdminDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    //To delete the user By UUID
     public String deleteUser(final String uuid) throws UserNotFoundException {
         try {
             UserEntity deletedUserEntity = entityManager.createNamedQuery("userByUuid", UserEntity.class)

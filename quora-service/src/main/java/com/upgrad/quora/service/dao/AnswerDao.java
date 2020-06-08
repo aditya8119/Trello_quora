@@ -30,6 +30,7 @@ public class AnswerDao {
     }
   }
 
+  //Edit Answer DAO
   public AnswerEntity editAnswer(AnswerEntity answer) {
     entityManager.persist(answer);
     return answer;
@@ -41,6 +42,7 @@ public class AnswerDao {
     entityManager.remove(answerEntity);
   }
 
+  //To get All Answers by question ID
   public List<AnswerEntity> getAllAnswersToQuestion(String questionId){
     try {
       return entityManager.createNamedQuery("answerByQuesId", AnswerEntity.class)
@@ -50,6 +52,7 @@ public class AnswerDao {
     }
   }
 
+  //To check the answer belongs to particular user Id
   public AnswerEntity checkAnswerBelongToUser(String auuid, String uuuid) {
 
     try {
@@ -63,6 +66,7 @@ public class AnswerDao {
     }
   }
 
+  //To update the answer
   public AnswerEntity updateAnswer(AnswerEntity answerEntity)
   {
     return entityManager.merge(answerEntity);
