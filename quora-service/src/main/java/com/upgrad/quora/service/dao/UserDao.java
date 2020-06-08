@@ -18,11 +18,13 @@ public class UserDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    //To create a user
     public UserEntity createUser(UserEntity userEntity){
         entityManager.persist(userEntity);
         return userEntity;
     }
 
+    //To get user By Email
     public UserEntity getUserByEmail(final String email) {
         try {
             return entityManager.createNamedQuery("userByEmail", UserEntity.class)
@@ -144,12 +146,13 @@ public class UserDao {
 
     }
 
+    //To update user Log Out Time
     public UserAuthTokenEntity setUserLogout(final UserAuthTokenEntity userAuthTokenEntity){
         entityManager.persist(userAuthTokenEntity);
         return userAuthTokenEntity;
     }
 
-
+    //To check for User Sign Out Status
     public boolean userSignOutStatus(String authorizationToken) {
         UserAuthTokenEntity userAuthTokenEntity = getUserAuthToken(authorizationToken);
         ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();
@@ -160,6 +163,7 @@ public class UserDao {
             return false;
     }
 
+    //To check if the user Role is Admin or NonAdmin
     public boolean isRoleAdmin(final String accessToken) {
         UserAuthTokenEntity userAuthTokenEntity = entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class)
                 .setParameter("accessToken", accessToken).getSingleResult();
