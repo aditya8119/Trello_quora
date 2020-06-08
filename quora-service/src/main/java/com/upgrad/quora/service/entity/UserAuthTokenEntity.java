@@ -33,6 +33,7 @@ public class UserAuthTokenEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
     private UserEntity user;
 
     @Column(name = "ACCESS_TOKEN")
@@ -44,7 +45,7 @@ public class UserAuthTokenEntity implements Serializable {
     @NotNull
     private ZonedDateTime expiresAt;
 
-    @Column(name = "LOGIN_AT")
+    @Column(name = "LOGIN_AT", columnDefinition = " TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @NotNull
     private ZonedDateTime loginAt;
 
