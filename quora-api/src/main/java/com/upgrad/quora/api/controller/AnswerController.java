@@ -9,14 +9,13 @@ import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AnswerNotFoundException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
-import com.upgrad.quora.service.type.ActionType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,14 +33,14 @@ public class AnswerController {
   private SignoutService signoutService;
 
   /**
-   * Api for creating an answer
+   * This API creates an answer
    *
-   * @param answerRequest
-   * @param questionId
-   * @param authorization
-   * @return
-   * @throws AuthorizationFailedException
-   * @throws InvalidQuestionException
+   * @param answerRequest Content of the answer
+   * @param questionId UUID of the question
+   * @param authorization Access Token
+   * @return Response Entity
+   * @throws AuthorizationFailedException ATHR-001 User has not signed in, ATHR-002 User is signed out.Sign in first to post an answer
+   * @throws InvalidQuestionException QUES-001 The question entered is invalid
    */
   @PostMapping(path = "/question/{questionId}/answer/create", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<AnswerResponse> createAnswer(final AnswerRequest answerRequest,
@@ -61,13 +60,13 @@ public class AnswerController {
   }
 
   /**
-   * Api for creating an answer
+   * This API deletes and Answer
    *
-   * @param answerId
-   * @param authorization
-   * @return
-   * @throws AuthorizationFailedException
-   * @throws AnswerNotFoundException
+   * @param answerId UUID for the Answer
+   * @param authorization Access Token
+   * @return Response Entity
+   * @throws AuthorizationFailedException ATHR-001 User has not signed in, ATHR-002 User is signed out.Sign in first to delete an answer
+   * @throws AnswerNotFoundException ANS-001 Entered answer uuid does not exis
    */
   @RequestMapping(method = RequestMethod.DELETE, path = "/answer/delete/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<AnswerDeleteResponse> deleteAnswer(
@@ -84,6 +83,14 @@ public class AnswerController {
     return new ResponseEntity<com.upgrad.quora.api.model.AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
   }
 
+  /**
+   * This API for getting all answers for a given question
+   * @param questionId UUID of the question
+   * @param authorization Access Token
+   * @return ResponseEntity
+   * @throws AuthorizationFailedException ATHR-001 User has not signed in, ATHR-002 User is signed out.Sign in first to get the answers
+   * @throws InvalidQuestionException QUES-001 The question with entered uuid whose details are to be seen does not exist
+   */
   @RequestMapping(method = RequestMethod.GET, path = "/answer/all/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<List<AnswerDetailsResponse>> getAllAnswersToQuestion(@PathVariable("questionId") final String questionId, @RequestHeader("authorization")final String authorization)throws AuthorizationFailedException, InvalidQuestionException{
     final List<AnswerEntity> answerResponseEntityList = answerService.getAllAnswersToQuestion(questionId,authorization);
