@@ -1,22 +1,22 @@
 ### Developers
-1. Aditya Balasubramanyam
-Github Account : adbalasu (Primary) , aditya8119 (For checking in Stub Code)
+1. Aditya Balasubramanyam <br/>
+Github Account : adbalasu (Primary) , aditya8119 (For checking in Stub Code)<br/>
 
-2. Soumya Rout
-Github Account : soumyarout80
+2. Soumya Rout<br/>
+Github Account : soumyarout80<br/>
 
-3. Swetha Gurram
-Github Account : sri-swetha
+3. Swetha Gurram<br/>
+Github Account : sri-swetha<br/>
 
-4. Urmila Unni
-Github Account : urmilaunni88
+4. Urmila Unni<br/>
+Github Account : urmilaunni88<br/>
 
 
 ### Trello_quora
 
-This project is a basic implementation for the backend for a Question Answer Forum.
+This project is a basic implementation for the backend for a Question Answer Forum.<br/>
 
-The following REST API's have been implemented :
+The following REST API's have been implemented :<br/>
 
 1. signup - "/user/signup"
 2. signin - "/user/signin"
@@ -34,22 +34,22 @@ The following REST API's have been implemented :
 14. getAllAnswersToQuestion - "answer/all/{questionId}"
 
 ### Specifications :
-JDK Version : 1.8.0_241
-Spring Boot : 2.0.1
-Spring Framework : 5.0.8
-Spring Fox : 2.7.0
-Database : Postgre SQL
-Database Driver Version : 42.2.2
-Build Tool : Apache Maven 
+JDK Version : 1.8.0_241<br/>
+Spring Boot : 2.0.1<br/>
+Spring Framework : 5.0.8<br/>
+Spring Fox : 2.7.0<br/>
+Database : Postgre SQL<br/>
+Database Driver Version : 42.2.2<br/>
+Build Tool : Apache Maven <br/>
 
 ### To Build first time (includes Database Setup)
-Navigate into the folder quora-db :
+Navigate into the folder quora-db :<br/>
 mvn clean install -Psetup
 
-### To Build
-mvn clean install
+### To Build<br/>
+mvn clean install<br/>
 
-### To Build without Tests
-mvn clean install -DskipTests
+### To Build without Tests<br/>
+mvn clean install -DskipTests<br/>
 
 
